@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "microservice-chart.fullname" . }}
+  namespace: {{ .Values.virtualservice.namespace }}
+spec:
+  gateways:
+  - luxuryhomes-gateway
+  hosts:
+  - hospitality-dev.demo.sidglobal.cloud
+  http:
+  - match:
+    - uri:
+        prefix: /{{ .Values.virtualservice.namespace }}/{{ include "microservice-chart.fullname" . }}/
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: {{ include "microservice-chart.fullname" . }}.{{ .Values.virtualservice.namespace }}.svc.cluster.local
+        port:
+          number: {{ .Values.service.port }}
